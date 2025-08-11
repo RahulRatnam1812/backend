@@ -1,0 +1,82 @@
+import { Request, Response } from "express";
+import User from "../models/user";
+import argon2 from "argon2";
+import passport from '../config/passport.config'
+// import AuthenticationService from "../services/Auth/AuthenticationService";
+export class UserController {
+    public static async getAllUsers(req: Request, res: Response): Promise<any> {
+        try {
+            const resp = await User.findAll();
+            console.log("resp", resp)
+            return res.status(200).json({
+                data: resp,
+                message: 'User response successful.'
+            })
+        } catch (error) {
+            return res.status(500).json({ message: 'Something went wrong.' })
+        }
+    }
+
+    public static async createAccount(req: Request, res: Response): Promise<any> {
+        try {
+            const requestData = req.body
+            const { firstName, lastName, userName, password } = requestData
+            const hashPassword = await argon2.hash(password)
+            console.log("hashPassword", hashPassword)
+            const response = await User.create({
+                first_name: firstName,
+                last_name: lastName,
+                user_name: userName,
+                password: hashPassword
+            })
+            res.status(200).json({
+                success: true,
+                message: 'User created successfully.'
+            })
+
+        } catch (error) {
+            console.log("error", error)
+            res.status(500).json({ message: 'Something went wrong.' })
+        }
+    }
+
+    public static async login(req: Request, res: Response): Promise<any> {
+        try {
+            const { userName, password } = req.body
+
+            // const authentication = new AuthenticationService()
+            // authentication.loginUser(userName,password)
+            passport.authenticate('local', { session: false }, (user:any,err:any, info:any) => {
+                if (!user) {
+                    return res.status(403).json({ message: info?.message || 'Invalid credentials' });
+                }
+                
+                if (err) {
+                    return res.status(500).json({ message: 'Server error', error: err });
+                }
+                
+
+                return res.status(200).json({
+                    message: info?.message || 'Login successful',
+                    user
+                });
+            })(req,res);
+            
+
+            let message;
+            // if(response){
+            //     res.status(200).json({
+            //         message:'User logged in successfully.'
+            //     })
+            // } else{
+            //     res.status(403).json({
+            //         message:'Invalid username or password.'
+            //     })
+            // }
+
+
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+}
