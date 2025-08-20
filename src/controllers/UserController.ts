@@ -3,6 +3,9 @@ import User from "../models/user";
 import argon2 from "argon2";
 import passport from '../config/passport.config'
 // import AuthenticationService from "../services/Auth/AuthenticationService";
+import Jwt from "jsonwebtoken";
+import { JWT_ACCESS_KEY } from "../config/app.config";
+
 export class UserController {
     public static async getAllUsers(req: Request, res: Response): Promise<any> {
         try {
@@ -46,22 +49,28 @@ export class UserController {
 
             // const authentication = new AuthenticationService()
             // authentication.loginUser(userName,password)
-            passport.authenticate('local', { session: false }, (user:any,err:any, info:any) => {
+            passport.authenticate('local', { session: false }, (user: User, err: any, info: any) => {
                 if (!user) {
                     return res.status(403).json({ message: info?.message || 'Invalid credentials' });
                 }
-                
+
                 if (err) {
                     return res.status(500).json({ message: 'Server error', error: err });
                 }
-                
-
+                const parameter = {
+                    userId: user.id
+                }
+                const token = Jwt.sign(parameter, JWT_ACCESS_KEY, { expiresIn: '1D' })
+                const refreshToken = Jwt.sign(parameter, JWT_ACCESS_KEY, { expiresIn: '7D' })
                 return res.status(200).json({
                     message: info?.message || 'Login successful',
-                    user
+                    token: {
+                        accessToken: token,
+                        refreshToken: refreshToken
+                    }
                 });
-            })(req,res);
-            
+            })(req, res);
+
 
             let message;
             // if(response){
