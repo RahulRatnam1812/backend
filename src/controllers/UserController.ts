@@ -3,8 +3,8 @@ import User from "../models/user";
 import argon2 from "argon2";
 import passport from '../config/passport.config'
 // import AuthenticationService from "../services/Auth/AuthenticationService";
-import Jwt from "jsonwebtoken";
-import { JWT_ACCESS_KEY } from "../config/app.config";
+import Jwt, { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
+import { JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY } from "../config/app.config";
 
 export class UserController {
     public static async getAllUsers(req: Request, res: Response): Promise<any> {
@@ -60,8 +60,8 @@ export class UserController {
                 const parameter = {
                     userId: user.id
                 }
-                const token = Jwt.sign(parameter, JWT_ACCESS_KEY, { expiresIn: '1D' })
-                const refreshToken = Jwt.sign(parameter, JWT_ACCESS_KEY, { expiresIn: '7D' })
+                const token = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
+                const refreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '7D' })
                 return res.status(200).json({
                     message: info?.message || 'Login successful',
                     token: {
@@ -86,6 +86,38 @@ export class UserController {
 
         } catch (error) {
             console.log("error", error)
+        }
+    }
+
+    public static async refreshToken(req: Request, res: Response): Promise<any> {
+        try {
+            const { refreshToken } = req.body
+
+                const decoded = Jwt.verify(refreshToken,JWT_REFRESH_SECRET_KEY) as {userId:string}
+
+                const userId = decoded.userId
+
+                const parameter = {
+                    userId:userId
+                }
+
+                const accessToken = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
+                const newRefreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '1s' })
+                return res.status(200).json({
+                    message: 'Success',
+                    token: {
+                        accessToken: accessToken,
+                        refreshToken: newRefreshToken
+                    }
+                });
+        } catch (error:any) {
+            console.log("error", error)
+            if (error instanceof TokenExpiredError){
+                return res.status(401).json({message: 'Refresh token expired.'})
+            }
+            if(error instanceof JsonWebTokenError){
+                return res.status(401).json({message: 'Invalid Refresh token.'})
+            }
         }
     }
 }
