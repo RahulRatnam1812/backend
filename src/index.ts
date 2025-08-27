@@ -6,6 +6,7 @@ import { userRoute } from './routes/userRoute';
 import session from 'express-session'
 import { ACCESS_KEY, PORT } from './config/app.config';
 import passport from 'passport';
+import { authRoute } from './routes/authentication';
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,7 @@ app.get('/', async (_req, res) => {
 });
 
 app.use('/v1/users',userRoute);
+app.use('/v1/auth',authRoute);
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 sequelize

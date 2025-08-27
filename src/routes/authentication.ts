@@ -1,6 +1,8 @@
+import express from 'express';
+import { AuthController } from '../controllers/AuthController';
 
+export const authRoute = express.Router();
 
-// app.get('/', async (_req, res) => {
-//   const users = await User.findAll();
-//   res.json(users);
-// });
+authRoute.post('/login',AuthController.login)
+authRoute.post('/refresh-token',AuthController.refreshToken)
+authRoute.post('/create-user',AuthController.createAccount)
