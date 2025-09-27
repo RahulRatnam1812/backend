@@ -7,6 +7,9 @@ import session from 'express-session'
 import { ACCESS_KEY, PORT } from './config/app.config';
 import passport from 'passport';
 import { authRoute } from './routes/authentication';
+import "../src/config/redis"
+import  {customResponseHandler, notFound}  from './errorHandling/errorHandling';
+
 
 const app = express();
 app.use(express.json());
@@ -18,7 +21,8 @@ app.use(session({
 }));
 
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session());
+app.use(customResponseHandler)
 
 app.get('/', async (_req, res) => {
   try {
@@ -34,11 +38,13 @@ app.use('/v1/auth',authRoute);
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 sequelize
-  .sync()
-  .then(() => {
-    console.log('Database synced');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  });
+.sync()
+.then(() => {
+  console.log('Database synced');
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+})
+.catch((err) => {
+  console.error('Unable to connect to the database:', err);
+});
+
+app.use(notFound)

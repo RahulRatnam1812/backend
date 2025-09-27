@@ -20,6 +20,8 @@ const express_session_1 = __importDefault(require("express-session"));
 const app_config_1 = require("./config/app.config");
 const passport_1 = __importDefault(require("passport"));
 const authentication_1 = require("./routes/authentication");
+require("../src/config/redis");
+const errorHandling_1 = require("./errorHandling/errorHandling");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, express_session_1.default)({
@@ -29,6 +31,7 @@ app.use((0, express_session_1.default)({
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
+app.use(errorHandling_1.customResponseHandler);
 app.get('/', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // const users = await User.findAll();
@@ -50,3 +53,4 @@ database_1.default
     .catch((err) => {
     console.error('Unable to connect to the database:', err);
 });
+app.use(errorHandling_1.notFound);

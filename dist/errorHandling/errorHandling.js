@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.customResponseHandler = void 0;
+exports.notFound = exports.customResponseHandler = void 0;
 const customResponseHandler = (req, res, next) => {
     res.successResponse = (message, data) => {
         return res.status(200).json({
@@ -18,5 +18,15 @@ const customResponseHandler = (req, res, next) => {
             success: false
         });
     };
+    next();
 };
 exports.customResponseHandler = customResponseHandler;
+const notFound = (req, res, next) => {
+    res.status(404).json({
+        status: "failed",
+        success: false,
+        message: "Route not found",
+    });
+    next();
+};
+exports.notFound = notFound;

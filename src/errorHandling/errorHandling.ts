@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { customResponse } from "../types/ResponseType";
 
-export const customResponseHandler = (req: Request, res: customResponse,next:NextFunction) => {
+export const customResponseHandler = (req: Request | any, res: customResponse|any,next:NextFunction) => {
     res.successResponse = (message:string,data:any) => {
         return res.status(200).json({
             message:message,
@@ -19,4 +19,15 @@ export const customResponseHandler = (req: Request, res: customResponse,next:Nex
             success:false
         })
     }
+      next();
+
 }
+
+export const notFound = (req: Request, res: Response, next: NextFunction) => {
+    res.status(404).json({
+        status: "failed",
+        success: false,
+        message: "Route not found",
+    });
+    next()
+};

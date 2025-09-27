@@ -16,20 +16,14 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const app_config_1 = require("../config/app.config");
 exports.default = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const token = (_a = req.header('Authentication')) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+    const token = (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
     try {
         if (!token) {
-            return res.errorResponse({
-                status: 401,
-                message: "Access Denied."
-            });
+            return res.errorResponse(401, "Access Denied.");
         }
         const verify = jsonwebtoken_1.default.verify(token, app_config_1.JWT_SECRET_KEY);
         if (!verify) {
-            return res.errorResponse({
-                status: 401,
-                message: "Invalid Authentication"
-            });
+            return res.errorResponse(401, "Invalid Authorization");
         }
         const jwtData = jsonwebtoken_1.default.decode(token);
         const user = jwtData;

@@ -11,4 +11,4 @@ const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware")
 exports.userRoute = express_1.default.Router();
 exports.userRoute.use(authMiddleware_1.default);
 exports.userRoute.get('/all-users', UserController_1.UserController.getAllUsers);
-exports.userRoute.post('/get-user', UserController_1.UserController.getUser);
+exports.userRoute.get('/user-details/:id', UserController_1.UserController.getUser);

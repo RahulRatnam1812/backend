@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const user_1 = __importDefault(require("../models/user"));
+const redis_1 = __importDefault(require("../config/redis"));
 class UserController {
     static getAllUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,8 +34,16 @@ class UserController {
     static getUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const resp = yield user_1.default.findAll();
-                console.log("resp", resp);
+                const id = req.params.id;
+                let resp = yield redis_1.default.get(`user:${id}`);
+                resp = resp ? JSON.parse(resp) : null;
+                if (!resp) {
+                    console.log("first");
+                    resp = yield user_1.default.findOne({
+                        where: { id: id }
+                    });
+                    yield redis_1.default.set(`user:${id}`, JSON.stringify(resp));
+                }
                 return res.status(200).json({
                     data: resp,
                     message: 'User response successful.'
