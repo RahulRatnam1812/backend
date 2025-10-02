@@ -90,15 +90,31 @@ public static async login(req: Request, res: Response): Promise<any> {
     public static async createAccount(req: Request, res: Response): Promise<any> {
         try {
             const requestData = req.body
-            const { firstName, lastName, userName, password } = requestData
+            const { firstName, lastName, userName, password,email } = requestData
             const hashPassword = await argon2.hash(password)
             console.log("hashPassword", hashPassword)
             const response = await User.create({
                 first_name: firstName,
                 last_name: lastName,
                 user_name: userName,
-                password: hashPassword
+                password: hashPassword,
+                email:email
             })
+            res.status(200).json({
+                success: true,
+                message: 'User created successfully.'
+            })
+
+        } catch (error) {
+            console.log("error", error)
+            res.status(500).json({ message: 'Something went wrong.' })
+        }
+    }
+
+    public static async forgotPassword(req: Request, res: Response): Promise<any> {
+        try {
+            const requestData = req.body
+            const { firstName, lastName, userName, password } = requestData
             res.status(200).json({
                 success: true,
                 message: 'User created successfully.'

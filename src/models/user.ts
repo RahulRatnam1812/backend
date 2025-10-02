@@ -41,16 +41,24 @@ class User extends Model{
         allowNull:true
     })
     public password!:string
+
     @Column({
         type:DataType.DATE,
         allowNull:false
     })
     public created_at!:Date
+
     @Column({
         type:DataType.DATE,
         allowNull:false
     })
     public updated_at!:Date
+
+    @Column({
+        type:DataType.STRING,
+        allowNull:false
+    })
+    public email!:string
 }
 
 export default User;

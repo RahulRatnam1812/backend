@@ -27,7 +27,6 @@ export class UserController {
             let resp:any = await redis.get(`user:${id}`)
             resp = resp ? JSON.parse(resp):null
             if(!resp){
-                console.log("first")
                 resp = await User.findOne({
                 where :{id: id}
                 });

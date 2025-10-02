@@ -10,3 +10,4 @@ exports.authRoute = express_1.default.Router();
 exports.authRoute.post('/login', AuthController_1.AuthController.login);
 exports.authRoute.post('/refresh-token', AuthController_1.AuthController.refreshToken);
 exports.authRoute.post('/create-user', AuthController_1.AuthController.createAccount);
+exports.authRoute.post('/forgot-password', AuthController_1.AuthController.forgotPassword);

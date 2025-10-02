@@ -130,15 +130,32 @@ class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const requestData = req.body;
-                const { firstName, lastName, userName, password } = requestData;
+                const { firstName, lastName, userName, password, email } = requestData;
                 const hashPassword = yield argon2_1.default.hash(password);
                 console.log("hashPassword", hashPassword);
                 const response = yield user_1.default.create({
                     first_name: firstName,
                     last_name: lastName,
                     user_name: userName,
-                    password: hashPassword
+                    password: hashPassword,
+                    email: email
                 });
+                res.status(200).json({
+                    success: true,
+                    message: 'User created successfully.'
+                });
+            }
+            catch (error) {
+                console.log("error", error);
+                res.status(500).json({ message: 'Something went wrong.' });
+            }
+        });
+    }
+    static forgotPassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const requestData = req.body;
+                const { firstName, lastName, userName, password } = requestData;
                 res.status(200).json({
                     success: true,
                     message: 'User created successfully.'

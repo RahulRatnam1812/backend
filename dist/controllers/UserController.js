@@ -38,7 +38,6 @@ class UserController {
                 let resp = yield redis_1.default.get(`user:${id}`);
                 resp = resp ? JSON.parse(resp) : null;
                 if (!resp) {
-                    console.log("first");
                     resp = yield user_1.default.findOne({
                         where: { id: id }
                     });
