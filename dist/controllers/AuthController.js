@@ -79,7 +79,7 @@ class AuthController {
                         }
                     });
                 })(req, res);
-                let message;
+                // let message;
                 // if(response){
                 //     res.status(200).json({
                 //         message:'User logged in successfully.'
