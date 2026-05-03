@@ -7,12 +7,13 @@ import passport from 'passport';
 import { authRoute } from './routes/authentication';
 import "../src/config/redis"
 import  {customResponseHandler, notFound, routeErrors}  from './errorHandling/errorHandling';
-
+import cors from "cors"
 
 export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(customResponseHandler)
+app.use(cors());
 
 app.use(session({
   secret:ACCESS_KEY,

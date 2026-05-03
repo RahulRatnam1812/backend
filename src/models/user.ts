@@ -47,7 +47,7 @@ class User extends Model{
         allowNull:true,
         field:'user_name'
     })
-    public userName!:string
+    public username!:string
 
     @Column({
         type:DataType.STRING,

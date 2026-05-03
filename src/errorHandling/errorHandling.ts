@@ -3,12 +3,12 @@ import { customResponse } from "../types/ResponseType";
 import { ENV } from "../config/env.config";
 
 export const defaultError: any = {
-	toJSON: () => {
-		return {};
-	},
+    toJSON: () => {
+        return {};
+    },
 }
-export const customResponseHandler = (req: Request | any, res: customResponse|any,next:NextFunction) => {
-    res.successResponse = (message:string,data:any) => {
+export const customResponseHandler = (req: Request | any, res: customResponse | any, next: NextFunction) => {
+    res.successResponse = (message: string, data: any) => {
         return res.status(200).json({
             success: true,
             status: 'success',
@@ -16,9 +16,21 @@ export const customResponseHandler = (req: Request | any, res: customResponse|an
             data
         });
     }
+    res.validationError = (errors: any[], message: string = "form validation errors", status: number = 403) => {
+        let errorResponse: any = {};
+        for (const error of errors) {
+            errorResponse[error.path] = error.msg;
+        }
 
-    res.errorResponse = (message:string,error:any, status:number = 500) => {
-        console.log("error.......",error)
+        return res.status(status).json({
+            status: "failed",
+            success: false,
+            errors: errorResponse,
+            message: message,
+        });
+    };
+    res.errorResponse = (message: string, error: any, status: number = 500) => {
+        console.log("error.......", error)
         return res.status(status).json({
             success: false,
             status: 'failed',
@@ -26,7 +38,7 @@ export const customResponseHandler = (req: Request | any, res: customResponse|an
             data: null
         })
     }
-      next();
+    next();
 
 }
 
@@ -35,21 +47,21 @@ export const notFound = (req: Request, res: Response, next: NextFunction) => {
         status: "failed",
         success: false,
         message: "Route not found",
-    });
+    });
     next()
 };
 
 
 export function routeErrors(err: Error, req: Request, res: Response, next: NextFunction) {
-	const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-	let errorMessage = 'Internal Server Error'
+    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    let errorMessage = 'Internal Server Error'
 
-	if (ENV.nodeEnv == "development") {
-		errorMessage = err.message || 'Internal Server Error';
-	}
-	res.status(statusCode).json({
-		status: "failed",
-		success: false,
-		message: errorMessage,
-	});
+    if (ENV.nodeEnv == "development") {
+        errorMessage = err.message || 'Internal Server Error';
+    }
+    res.status(statusCode).json({
+        status: "failed",
+        success: false,
+        message: errorMessage,
+    });
 }
