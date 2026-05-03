@@ -1,7 +1,7 @@
 import http from "node:http";
-import { app } from "./app";
 import { PORT } from "./config/app.config";
 import database from "./models/index";
+import { app } from "./app";
 
 const server = http.createServer(app);
 
