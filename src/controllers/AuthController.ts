@@ -9,6 +9,7 @@ import { JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY } from "../config/app.config";
 export class AuthController {
 public static async login(req: Request, res: Response): Promise<any> {
         try {
+            console.log("hi")
             const { userName, password } = req.body
 
             // const authentication = new AuthenticationService()

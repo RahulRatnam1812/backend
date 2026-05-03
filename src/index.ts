@@ -1,6 +1,4 @@
 import express from 'express';
-// import Sequelize from './config/database';
-import User from './models/user';
 import 'reflect-metadata';
 import { userRoute } from './routes/userRoute';
 import session from 'express-session'
@@ -9,7 +7,6 @@ import passport from 'passport';
 import { authRoute } from './routes/authentication';
 import "../src/config/redis"
 import  {customResponseHandler, notFound}  from './errorHandling/errorHandling';
-import { Sequelize } from 'sequelize';
 
 
 const app = express();
@@ -36,20 +33,7 @@ app.get('/', async (_req, res) => {
 
 app.use('/v1/users',userRoute);
 app.use('/v1/auth',authRoute);
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
-const sequelize = new Sequelize(
-  process.env.DB_DATABASE as string,
-  process.env.DB_USERNAME as string,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
-    port: 5432,
-  }
-);
-
-export default sequelize;
-
-app.use(notFound)
+app.use(notFound);
