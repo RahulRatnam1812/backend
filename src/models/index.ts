@@ -1,28 +1,19 @@
 import { Sequelize } from "sequelize-typescript";
-import User from "./user";
+import dbConfig from "../config/database";
 import { types } from 'pg';
-import { ENV } from "../config/env.config";
 
+types.setTypeParser(20, (val: string) => parseInt(val, 10));
 
-
-// ✅ Global override for PostgreSQL BIGINT (OID 20)
-types.setTypeParser(20, (val: string) => Number.parseInt(val, 10));
-
-const connection: any = new Sequelize({
-  dialect: "postgres",
-  host: ENV.database.HOST,
-  username: ENV.database.USER,
-  password: ENV.database.PASSWORD,
-  database: ENV.database.DB,
-  pool: ENV.database.pool,
-  logging: false,
-  timezone: '+00:00',
-  /* sync:{
-    force:true,
-  }, */
-  models: [
-    User
-  ],
+const connection:any = new Sequelize({
+    dialect: "postgres",
+    host: dbConfig.host,
+    username: dbConfig.username,
+    password: dbConfig.password,
+    database: dbConfig.database,
+    pool:dbConfig.pool,
+    logging: false,
+    timezone: "+00:00",
+    models: []
 });
 
 export default connection;
