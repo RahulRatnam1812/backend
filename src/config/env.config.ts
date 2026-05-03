@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const ENV ={
+    nodeEnv: process.env.NODE_ENV || 'development',
     database:{
         HOST: process.env.DB_HOST || "localhost",
         USER: process.env.DB_USERNAME || "postgres",

@@ -19,22 +19,35 @@ class User extends Model{
     public id!:number;
 
     @Column({
-        type:DataType.STRING,
-        allowNull:true
+        type:DataType.UUID,
+        defaultValue: DataType.UUIDV4,
+        allowNull:false,
+        unique:true,
+        field:'unique_id'
     })
-    public first_name!:string
+    public uniqueId!:string;
 
     @Column({
         type:DataType.STRING,
-        allowNull:true
+        allowNull:true,
+        field:'first_name'
+
     })
-    public last_name!:string
+    public firstName!:string
 
     @Column({
         type:DataType.STRING,
-        allowNull:true
+        allowNull:true,
+        field:'last_name'
     })
-    public user_name!:string
+    public lastName!:string
+
+    @Column({
+        type:DataType.STRING,
+        allowNull:true,
+        field:'user_name'
+    })
+    public userName!:string
 
     @Column({
         type:DataType.STRING,

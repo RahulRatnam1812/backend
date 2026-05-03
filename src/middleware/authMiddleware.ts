@@ -1,27 +1,27 @@
 //auth.m
-import { Request, NextFunction } from 'express';
+import { Request, NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET_KEY } from '../config/app.config';
 
-export default async (req: Request, res: any, next: NextFunction) => {
-  const token = req.header('Authorization')?.split(' ')[1]
+
+
+export default async function authMiddleware(req: Request, res: Response | any, next: NextFunction) {
+  const token = req.header('Authorization')?.split(' ')[1];
   try {
     if (!token) {
-      return res.errorResponse(401, "Access Denied.")
+      console.log('10');
+    return res.errorResponse("Access Denied.", null, 401);
     }
-    const verify = jwt.verify(token, JWT_SECRET_KEY)
-    
+
+    const verify = jwt.verify(token, JWT_SECRET_KEY);
     if (!verify) {
-      return res.errorResponse(401,"Invalid Authorization")
+      return res.errorResponse("Invalid Authorization", null, 401);
     }
 
-    const jwtData = jwt.decode(token)
-
-    const user = jwtData
-    //   req.user = jwtData
-    next()
+    next();
   } catch (error) {
-    console.log("middle error", error)
+    console.log('middle error', error);
+    return res.errorResponse("Invalid Authorization", null, 401);
   }
 };
 

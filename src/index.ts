@@ -6,11 +6,13 @@ import { ACCESS_KEY, PORT } from './config/app.config';
 import passport from 'passport';
 import { authRoute } from './routes/authentication';
 import "../src/config/redis"
-import  {customResponseHandler, notFound}  from './errorHandling/errorHandling';
+import  {customResponseHandler, notFound, routeErrors}  from './errorHandling/errorHandling';
 
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(customResponseHandler)
 
 app.use(session({
   secret:ACCESS_KEY,
@@ -20,7 +22,6 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session());
-app.use(customResponseHandler)
 
 app.get('/', async (_req, res) => {
   try {
@@ -36,4 +37,5 @@ app.use('/v1/auth',authRoute);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
+app.use(routeErrors);
 app.use(notFound);

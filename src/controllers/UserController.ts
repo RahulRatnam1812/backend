@@ -8,20 +8,20 @@ import { JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY } from "../config/app.config";
 // import redis from "../config/redis";
 
 export class UserController {
-    public static async getAllUsers(req: Request, res: Response): Promise<any> {
+    public static async getAllUsers(req: Request, res: Response | any): Promise<any> {
         try {
-            const resp = await User.findAll();
-            console.log("resp", resp)
-            return res.status(200).json({
-                data: resp,
-                message: 'User response successful.'
-            })
+            const data = await User.findAll({
+                attributes: { exclude: ['password'] }
+            });
+            // console.log("resp", resp)
+            return res.successResponse('User response successful.', data);
         } catch (error) {
-            return res.status(500).json({ message: 'Something went wrong.' })
+            return res.errorResponse("something went wrong.", error);
+
         }
     }
 
-    public static async getUser(req: Request, res: Response): Promise<any> {
+    public static async getUser(req: Request, res: Response | any): Promise<any> {
         try {
             const id = req.params.id
             // let resp:any = await redis.get(`user:${id}`)
@@ -32,13 +32,13 @@ export class UserController {
             //     });
             //     await redis.set(`user:${id}`,JSON.stringify(resp))
             // }
-             
-                // return res.status(200).json({
-                //     data: resp,
-                //     message: 'User response successful.'
-                // })
+
+            // return res.status(200).json({
+            //     data: resp,
+            //     message: 'User response successful.'
+            // })
         } catch (error) {
-            return res.status(500).json({ message: 'Something went wrong.' })
+            return res.errorResponse("Something went wrong.", error, 500);
         }
     }
 }
