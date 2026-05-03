@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import dbConfig from "../config/database";
 import { types } from 'pg';
+import User from "./user";
 
 types.setTypeParser(20, (val: string) => parseInt(val, 10));
 
@@ -13,7 +14,9 @@ const connection:any = new Sequelize({
     pool:dbConfig.pool,
     logging: false,
     timezone: "+00:00",
-    models: []
+    models: [
+      User
+    ]
 });
 
 export default connection;
