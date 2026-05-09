@@ -5,10 +5,12 @@ import passport from '../config/passport.config'
 // import AuthenticationService from "../services/Auth/AuthenticationService";
 import Jwt, { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import { JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY } from "../config/app.config";
+import { AuthResponse } from "../types/ResponseType";
 
 export class AuthController {
 public static async login(req: Request, res: Response): Promise<any> {
         try {
+            console.log("hi")
             const { userName, password } = req.body
 
             // const authentication = new AuthenticationService()
@@ -21,8 +23,11 @@ public static async login(req: Request, res: Response): Promise<any> {
                 if (err) {
                     return res.status(500).json({ message: 'Server error', error: err });
                 }
-                const parameter = {
-                    userId: user.id
+                const parameter:AuthResponse = {
+                    userId: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    uniqueId: user.uniqueId,
                 }
                 const token = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
                 const refreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '7D' })

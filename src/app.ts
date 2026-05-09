@@ -1,16 +1,27 @@
-import express from "express";
-import { userRoute } from "./routes/userRoute";
-import { authRoute } from "./routes/authentication";
-import { notFound } from "./errorHandling/errorHandling";
-// import cors from "cors";
+import express from 'express';
+import 'reflect-metadata';
+import { userRoute } from './routes/userRoute';
+import session from 'express-session'
+import { ACCESS_KEY, PORT } from './config/app.config';
+import passport from 'passport';
+import { authRoute } from './routes/authentication';
+import "../src/config/redis"
+import  {customResponseHandler, notFound, routeErrors}  from './errorHandling/errorHandling';
+
 
 export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(cors());
+app.use(customResponseHandler)
 
-app.use('/v1/users',userRoute);
-app.use('/v1/auth',authRoute);
+app.use(session({
+  secret:ACCESS_KEY,
+  resave:false,
+  saveUninitialized:false
+}));
+
+app.use(passport.initialize())
+app.use(passport.session());
 
 app.get('/', async (_req, res) => {
   try {
@@ -21,4 +32,9 @@ app.get('/', async (_req, res) => {
   }
 });
 
-app.use(notFound)
+app.use('/v1/users',userRoute);
+app.use('/v1/auth',authRoute);
+
+
+app.use(routeErrors);
+app.use(notFound);
