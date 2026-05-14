@@ -8,7 +8,7 @@ import { JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY } from "../config/app.config";
 import { AuthResponse } from "../types/ResponseType";
 
 export class AuthController {
-public static async login(req: Request, res: Response): Promise<any> {
+    public static async login(req: Request, res: Response | any): Promise<any> {
         try {
             console.log("hi")
             const { userName, password } = req.body
@@ -23,7 +23,7 @@ public static async login(req: Request, res: Response): Promise<any> {
                 if (err) {
                     return res.status(500).json({ message: 'Server error', error: err });
                 }
-                const parameter:AuthResponse = {
+                const parameter: AuthResponse = {
                     userId: user.id,
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -31,13 +31,14 @@ public static async login(req: Request, res: Response): Promise<any> {
                 }
                 const token = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
                 const refreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '7D' })
-                return res.status(200).json({
-                    message: info?.message || 'Login successful',
-                    token: {
-                        accessToken: token,
-                        refreshToken: refreshToken
+                return res.successResponse( info?.message || 'Login successful',
+                    {
+                        token: {
+                            accessToken: token,
+                            refreshToken: refreshToken
+                        }
                     }
-                });
+                );
             })(req, res);
 
 
@@ -64,30 +65,30 @@ public static async login(req: Request, res: Response): Promise<any> {
         try {
             const { refreshToken } = req.body
 
-                const decoded = Jwt.verify(refreshToken,JWT_REFRESH_SECRET_KEY) as {userId:string}
+            const decoded = Jwt.verify(refreshToken, JWT_REFRESH_SECRET_KEY) as { userId: string }
 
-                const userId = decoded.userId
+            const userId = decoded.userId
 
-                const parameter = {
-                    userId:userId
-                }
-
-                const accessToken = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
-                const newRefreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '1s' })
-                return res.status(200).json({
-                    message: 'Success',
-                    token: {
-                        accessToken: accessToken,
-                        refreshToken: newRefreshToken
-                    }
-                });
-        } catch (error:any) {
-            console.log("error", error)
-            if (error instanceof TokenExpiredError){
-                return res.status(401).json({message: 'Refresh token expired.'})
+            const parameter = {
+                userId: userId
             }
-            if(error instanceof JsonWebTokenError){
-                return res.status(401).json({message: 'Invalid Refresh token.'})
+
+            const accessToken = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
+            const newRefreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '1s' })
+            return res.status(200).json({
+                message: 'Success',
+                token: {
+                    accessToken: accessToken,
+                    refreshToken: newRefreshToken
+                }
+            });
+        } catch (error: any) {
+            console.log("error", error)
+            if (error instanceof TokenExpiredError) {
+                return res.status(401).json({ message: 'Refresh token expired.' })
+            }
+            if (error instanceof JsonWebTokenError) {
+                return res.status(401).json({ message: 'Invalid Refresh token.' })
             }
         }
     }
@@ -95,15 +96,15 @@ public static async login(req: Request, res: Response): Promise<any> {
     public static async createAccount(req: Request, res: Response): Promise<any> {
         try {
             const requestData = req.body
-            const { firstName, lastName, userName, password,email } = requestData
+            const { firstName, lastName, userName, password, email } = requestData
             const hashPassword = await argon2.hash(password)
             console.log("hashPassword", hashPassword)
             const response = await User.create({
-                first_name: firstName,
-                last_name: lastName,
-                user_name: userName,
+                firstName: firstName,
+                lastName: lastName,
+                userName: userName,
                 password: hashPassword,
-                email:email
+                email: email
             })
             res.status(200).json({
                 success: true,
