@@ -9,7 +9,9 @@ import passport from 'passport';
 import { authRoute } from './routes/authentication';
 import "../src/config/redis"
 import  {customResponseHandler, notFound}  from './errorHandling/errorHandling';
-import { Sequelize } from 'sequelize';
+// import { Sequelize } from 'sequelize';
+import VerificationOtp from './models/verificationOtp';
+import { Sequelize } from "sequelize-typescript";
 
 
 const app = express();
@@ -36,7 +38,7 @@ app.get('/', async (_req, res) => {
 
 app.use('/v1/users',userRoute);
 app.use('/v1/auth',authRoute);
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
 const sequelize = new Sequelize(
@@ -47,6 +49,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: 'postgres',
     port: 5432,
+    models: [User,VerificationOtp]
   }
 );
 
