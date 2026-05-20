@@ -191,11 +191,6 @@ export class AuthController {
 
             const accessToken = Jwt.sign(parameter, JWT_SECRET_KEY, { expiresIn: '1D' })
             const refreshToken = Jwt.sign(parameter, JWT_REFRESH_SECRET_KEY, { expiresIn: '1s' })
-            const loginResponse = {
-                id: user?.id,
-                email: user?.email,
-                user_name: user?.user_name
-            }
             return res.status(200).json({
                 success: true,
                 message: "Email verified successfully",

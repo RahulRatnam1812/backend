@@ -11,6 +11,7 @@ import cors from 'cors';
 // import { Sequelize } from 'sequelize';
 import VerificationOtp from './models/verificationOtp';
 import { Sequelize } from "sequelize-typescript";
+import User from './models/user';
 
 export const app = express();
 app.use(express.json());
