@@ -3,5 +3,6 @@
 .env.development
 .env.production
 .env.test
-
+.env.*
 node_modules
+dist
