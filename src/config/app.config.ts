@@ -8,3 +8,5 @@ export const DB_DATABASE = process.env.DB_DATABASE || ''
 export const PORT = process.env.PORT || 3001
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || ''
 export const JWT_REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET_KEY || ''
+export const EMAIL_USER = process.env.EMAIL_USER|| ''
+export const EMAIL_PASS  = process.env.EMAIL_PASS || ''
